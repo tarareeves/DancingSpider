@@ -1,6 +1,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,6 +32,9 @@ public class SpiderDance {
 	public static int dir = 10;
     public static int allButtons;
     public static SerialPort sPort;
+	public static int randomNum;
+	public static boolean isUpDown;
+	public static Random rand;
     
     static class Task extends TimerTask{
 
@@ -38,8 +42,17 @@ public class SpiderDance {
 		public void run() {
 			
 			i++;
+
+			if(i%randomNum == 0) {
+				randomNum = rand.nextInt((20-8) + 1) + 8;
+
+				isUpDown = !isUpDown;
+			}
 			
-			slideMove();
+			if(isUpDown)
+				upAndDown();
+			else
+				slideMove();
 						
 			spider.sendMessage();
 		}
@@ -65,6 +78,7 @@ public class SpiderDance {
 							timer.cancel();
 							timer.purge();
 						}
+
 						
 						try {
 							spider.getSerialPort().closePort();
@@ -88,15 +102,19 @@ public class SpiderDance {
 		frame.setVisible(true);
 		
 		midi = Midi.getInstance();
-		
+
 		spider = new Spider();
-		spider.setSerialPort(new SerialPort("COM5"));
-		
+		spider.setSerialPort(new SerialPort("COM7"));
+
 		if(!spider.connect()){
 			System.out.println("Couldn't connect to serial port!");
 			return;
 		}
-		
+
+		rand = new Random();
+		randomNum = rand.nextInt((20-8) + 1) + 8;
+		isUpDown = true;
+
 		for(int i = 0; i < 200; i++){
 			spider.sendMessage();
 			try {
@@ -120,7 +138,6 @@ public class SpiderDance {
 				e.printStackTrace();
 			}
 		}
-    	
     }
 
 	public static void main(String[] args) {
@@ -201,6 +218,10 @@ public class SpiderDance {
 			}
 		}
 	}
+
+	public static void newMove() {
+		
+	}
 	
 	public static void upAndDown(){
 		if(spider.getRightVertical() == 30){
@@ -221,6 +242,7 @@ public class SpiderDance {
 				return;
 			}else{
 				dir = 10;
+
 				spider.setRightHoriz(127);
 				return;
 			}

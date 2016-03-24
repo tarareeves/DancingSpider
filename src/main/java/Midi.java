@@ -19,7 +19,6 @@ public class Midi {
 
 	private final int NOTE_ON = 0x90;
     private final int NOTE_OFF = 0x80;
-    private final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
     
 	protected Midi(){
 		
@@ -82,7 +81,6 @@ public class Midi {
 
 			@Override
 			public void meta(MetaMessage e) {
-						
 				if(e.getType() == 47){
 					seq.stop();
 					seq.close();
